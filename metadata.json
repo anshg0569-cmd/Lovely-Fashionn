@@ -1,0 +1,6 @@
+{
+  "name": "Lovely Fashion - Wholesale Punjabi Suits",
+  "description": "Lovely Fashion is an exclusive wholesale Punjabi suits shop in AC Market, Ludhiana, offering wholesale catalog suits, retail bundle orders, and direct Pan-India transport.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
