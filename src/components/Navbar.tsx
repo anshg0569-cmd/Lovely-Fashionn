@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import { PageView } from '../types';
-import { ShoppingBag, Store, Menu, X, PhoneCall, Sparkles, MapPin, Info } from 'lucide-react';
+import { PageView, UserAccount } from '../types';
+import { ShoppingBag, Store, Menu, X, PhoneCall, Sparkles, MapPin, User as UserIcon, LogIn } from 'lucide-react';
 
 interface NavbarProps {
   currentPage: PageView;
   setCurrentPage: (page: PageView) => void;
   cartCount: number;
+  currentUser: UserAccount | null;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   currentPage,
   setCurrentPage,
-  cartCount
+  cartCount,
+  currentUser
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -19,7 +21,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'home', label: 'Home' },
     { id: 'shop', label: 'Wholesale Catalog' },
     { id: 'cart', label: 'Cart & Bill', badge: cartCount },
-    { id: 'about', label: 'AC Market Store & Contact' },
+    { id: 'auth', label: currentUser ? 'My Account' : 'Sign In / Sign Up' },
   ];
 
   const handleNavClick = (page: PageView) => {
@@ -91,7 +93,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
-                  className={`relative px-4 py-2 rounded-md text-sm font-semibold transition-all duration-150 flex items-center gap-2 ${
+                  className={`relative px-4 py-2 rounded-md text-sm font-semibold transition-all duration-150 flex items-center gap-2 cursor-pointer ${
                     isActive
                       ? 'bg-amber-900 text-amber-50 shadow-sm'
                       : 'text-stone-700 hover:text-amber-900 hover:bg-amber-50/80'
@@ -112,15 +114,27 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Quick Action Badges */}
           <div className="hidden lg:flex items-center gap-3">
-            <a
-              href="https://wa.me/919876543210?text=Hello%20Lovely%20Fashion%20Ludhiana,%20I%20am%20interested%20in%20Wholesale%20Punjabi%20Suits%20bulk%20sets."
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full text-emerald-800 hover:text-emerald-900 border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 transition"
-            >
-              <PhoneCall className="w-3.5 h-3.5 text-emerald-700" />
-              WhatsApp Catalog
-            </a>
+            {/* User Account / Sign In Indicator */}
+            {currentUser ? (
+              <button
+                onClick={() => handleNavClick('auth')}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-300 text-xs font-semibold text-amber-950 hover:bg-amber-100 transition cursor-pointer"
+                title="View Account"
+              >
+                <div className="w-6 h-6 rounded-full bg-amber-900 text-white flex items-center justify-center font-bold text-[11px]">
+                  {currentUser.fullName.charAt(0).toUpperCase()}
+                </div>
+                <span className="truncate max-w-[110px]">{currentUser.fullName}</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => handleNavClick('auth')}
+                className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full text-stone-700 hover:text-amber-950 border border-stone-200 bg-stone-50 hover:bg-amber-50 transition cursor-pointer"
+              >
+                <LogIn className="w-3.5 h-3.5 text-amber-800" />
+                <span>Sign In / Sign Up</span>
+              </button>
+            )}
 
             <button
               onClick={() => handleNavClick('cart')}
@@ -139,8 +153,16 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Mobile Menu Button */}
           <div className="flex md:hidden items-center gap-2">
             <button
+              onClick={() => handleNavClick('auth')}
+              className="p-2 rounded-lg bg-stone-100 text-stone-700 border border-stone-200 text-xs"
+              title="Sign In / Account"
+            >
+              <UserIcon className="w-4 h-4" />
+            </button>
+
+            <button
               onClick={() => handleNavClick('cart')}
-              className="relative p-2 rounded-lg bg-amber-50 text-amber-900 border border-amber-200"
+              className="relative p-2 rounded-lg bg-amber-50 text-amber-900 border border-amber-200 cursor-pointer"
             >
               <ShoppingBag className="w-5 h-5" />
               {cartCount > 0 && (
@@ -152,7 +174,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg text-stone-700 hover:bg-stone-100 focus:outline-none"
+              className="p-2 rounded-lg text-stone-700 hover:bg-stone-100 focus:outline-none cursor-pointer"
               aria-label="Toggle navigation"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -168,7 +190,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               key={item.id}
               onClick={() => handleNavClick(item.id)}
-              className={`w-full text-left px-4 py-3 rounded-lg text-base font-semibold flex items-center justify-between ${
+              className={`w-full text-left px-4 py-3 rounded-lg text-base font-semibold flex items-center justify-between cursor-pointer ${
                 currentPage === item.id
                   ? 'bg-amber-900 text-white'
                   : 'text-stone-800 hover:bg-amber-50'

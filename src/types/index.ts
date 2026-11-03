@@ -54,5 +54,16 @@ export interface WholesaleOrder {
   status: 'Confirmed' | 'Dispatched from AC Market' | 'Delivered';
 }
 
-export type PageView = 'home' | 'shop' | 'cart' | 'about';
+export interface UserAccount {
+  fullName: string;
+  email: string;
+  password?: string;
+  phone: string;
+  city: string;
+  state: string;
+  address?: string;
+  shopName?: string;
+}
+
+export type PageView = 'home' | 'shop' | 'cart' | 'auth';
 

@@ -97,10 +97,10 @@ export const Footer: React.FC<FooterProps> = ({ setCurrentPage }) => {
               </li>
               <li>
                 <button
-                  onClick={() => { setCurrentPage('about'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  onClick={() => { setCurrentPage('auth'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                   className="hover:text-amber-400 transition-colors"
                 >
-                  AC Market Store & Mandi Info
+                  Sign In / Sign Up (Login & Register)
                 </button>
               </li>
             </ul>

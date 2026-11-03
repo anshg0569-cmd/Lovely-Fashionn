@@ -1,21 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { PageView, PunjabiSuit, CartItem, WholesaleOrder } from './types';
+import { PageView, PunjabiSuit, CartItem, WholesaleOrder, UserAccount } from './types';
 import { PUNJABI_SUITS } from './data/products';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { HomePage } from './pages/HomePage';
 import { ShopPage } from './pages/ShopPage';
 import { CartCheckoutPage } from './pages/CartCheckoutPage';
-import { AboutPage } from './pages/AboutPage';
+import { AuthPage } from './pages/AuthPage';
 import { ProductDetailModal } from './components/ProductDetailModal';
 import { InvoiceModal } from './components/InvoiceModal';
 import { CheckCircle2, ShoppingBag, ArrowRight } from 'lucide-react';
 
 const CART_STORAGE_KEY = 'lovely_fashion_cart';
 const ORDERS_STORAGE_KEY = 'lovely_fashion_orders';
+const USER_STORAGE_KEY = 'lovely_fashion_current_user';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<PageView>('home');
+  
   const [cart, setCart] = useState<CartItem[]>(() => {
     try {
       const saved = localStorage.getItem(CART_STORAGE_KEY);
@@ -30,6 +32,16 @@ export default function App() {
         quantitySets: 1
       }
     ];
+  });
+
+  const [currentUser, setCurrentUser] = useState<UserAccount | null>(() => {
+    try {
+      const saved = localStorage.getItem(USER_STORAGE_KEY);
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error('Error loading user from localStorage', e);
+    }
+    return null;
   });
 
   const [pastOrders, setPastOrders] = useState<WholesaleOrder[]>(() => {
@@ -54,6 +66,19 @@ export default function App() {
       console.error('Error saving cart', e);
     }
   }, [cart]);
+
+  // Sync Current User to localStorage
+  useEffect(() => {
+    try {
+      if (currentUser) {
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(currentUser));
+      } else {
+        localStorage.removeItem(USER_STORAGE_KEY);
+      }
+    } catch (e) {
+      console.error('Error saving user', e);
+    }
+  }, [currentUser]);
 
   // Sync Orders to localStorage
   useEffect(() => {
@@ -107,6 +132,16 @@ export default function App() {
     showToast('Wholesale cart cleared.');
   };
 
+  const handleLogin = (user: UserAccount) => {
+    setCurrentUser(user);
+    showToast(`Welcome, ${user.fullName}!`);
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    showToast('Signed out successfully.');
+  };
+
   const handleOrderSuccess = (newOrder: WholesaleOrder) => {
     setPastOrders((prev) => [newOrder, ...prev]);
     setCart([]);
@@ -153,9 +188,10 @@ export default function App() {
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
         cartCount={totalCartSets}
+        currentUser={currentUser}
       />
 
-      {/* Main View Render (Pure Frontend Shopping Architecture) */}
+      {/* Main View Render (Strictly 4 core views) */}
       <main className="flex-1">
         {currentPage === 'home' && (
           <HomePage
@@ -180,11 +216,19 @@ export default function App() {
             onClearCart={handleClearCart}
             setCurrentPage={setCurrentPage}
             onOrderSuccess={handleOrderSuccess}
+            currentUser={currentUser}
           />
         )}
 
-        {currentPage === 'about' && (
-          <AboutPage setCurrentPage={setCurrentPage} />
+        {currentPage === 'auth' && (
+          <AuthPage
+            currentUser={currentUser}
+            onLogin={handleLogin}
+            onLogout={handleLogout}
+            pastOrders={pastOrders}
+            onViewInvoice={(order) => setActiveInvoice(order)}
+            setCurrentPage={setCurrentPage}
+          />
         )}
       </main>
 

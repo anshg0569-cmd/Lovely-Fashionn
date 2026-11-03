@@ -49,9 +49,12 @@ This project was developed for a **College-Level Cloud Computing course evaluati
 - **Local Storage Persistence:** Cart items persist across page refreshes using HTML5 `localStorage`.
 - **Instant Tax Invoice Generation:** Generates a real, printable Indian GST Wholesale Invoice with order ID, itemized HSN codes, and authorized seal.
 
-### 4. AC Market Store & Contact Page (`about`)
-- Physical shop details in AC Market, Ludhiana.
-- Mandi wholesale guidelines, 4-piece color packaging policy, and pan-India transport options.
+### 4. Sign In & Sign Up Page (`auth`)
+- **Dual Tab Mode:** Toggle effortlessly between **Sign In (Login)** and **Sign Up (Registration)**.
+- **One-Click Demo Sign In:** Designed for examiners and college professors to immediately test authenticated features with pre-configured credentials (`jasreet@lovelyfashion.com`).
+- **Client-Side Account Storage:** Saves registered accounts and current session directly in browser `localStorage`.
+- **Member Dashboard:** Displays profile summary, contact information, and past order history with a button to view/print previous GST wholesale invoices.
+- **Auto-Fill Checkout:** Once logged in, the cart and checkout form automatically pre-fills the customer's name, phone, email, and address.
 
 ---
 

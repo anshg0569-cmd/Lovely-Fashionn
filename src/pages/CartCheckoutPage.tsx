@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { CartItem, PageView, WholesaleOrder } from '../types';
+import React, { useState, useEffect } from 'react';
+import { CartItem, PageView, UserAccount, WholesaleOrder } from '../types';
 import { Trash2, Plus, Minus, ArrowRight, ShieldCheck, Truck, ShoppingBag, Receipt, CheckCircle, PackageOpen, Store, Building2 } from 'lucide-react';
 
 interface CartCheckoutPageProps {
@@ -9,6 +9,7 @@ interface CartCheckoutPageProps {
   onClearCart: () => void;
   setCurrentPage: (page: PageView) => void;
   onOrderSuccess: (order: WholesaleOrder) => void;
+  currentUser?: UserAccount | null;
 }
 
 export const CartCheckoutPage: React.FC<CartCheckoutPageProps> = ({
@@ -17,22 +18,39 @@ export const CartCheckoutPage: React.FC<CartCheckoutPageProps> = ({
   onRemoveItem,
   onClearCart,
   setCurrentPage,
-  onOrderSuccess
+  onOrderSuccess,
+  currentUser
 }) => {
-  // Checkout Form State (with helpful prefilled demo defaults)
+  // Checkout Form State (defaults to current signed-in user if available)
   const [formData, setFormData] = useState({
-    shopName: 'Punjab Viraasat Boutique',
-    ownerName: 'Simranjit Kaur',
-    phone: '+91 98765 12345',
-    email: 'boutique.amritsar@gmail.com',
-    address: 'Shop No. 12, Main Bazaar, Near Golden Temple',
-    city: 'Amritsar',
-    state: 'Punjab',
+    shopName: currentUser?.shopName || 'Punjab Viraasat Boutique',
+    ownerName: currentUser?.fullName || 'Simranjit Kaur',
+    phone: currentUser?.phone || '+91 98765 12345',
+    email: currentUser?.email || 'boutique.amritsar@gmail.com',
+    address: currentUser?.address || 'Shop No. 12, Main Bazaar, Near Golden Temple',
+    city: currentUser?.city || 'Amritsar',
+    state: currentUser?.state || 'Punjab',
     pincode: '143001',
     gstNumber: '03AABCP8921N1ZY',
     transportMethod: 'V-Trans Express Transport (Daily Punjab-Delhi Line)',
     paymentMethod: 'UPI / Direct Bank Transfer (NEFT/RTGS)'
   });
+
+  // Update form if user logs in while visiting cart
+  useEffect(() => {
+    if (currentUser) {
+      setFormData((prev) => ({
+        ...prev,
+        shopName: currentUser.shopName || prev.shopName,
+        ownerName: currentUser.fullName || prev.ownerName,
+        phone: currentUser.phone || prev.phone,
+        email: currentUser.email || prev.email,
+        city: currentUser.city || prev.city,
+        state: currentUser.state || prev.state,
+        address: currentUser.address || prev.address
+      }));
+    }
+  }, [currentUser]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
